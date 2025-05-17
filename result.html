@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Information - TNSTC</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>TNSTC Route Information System</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('all_routes') }}">All Routes</a></li>
+                    <li><a href="{{ url_for('analytics') }}">Analytics</a></li>
+                    <li><a href="{{ url_for('book_ticket') }}" class="{{ 'active' if request.endpoint == 'book_ticket' else '' }}">Book Ticket</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="result-container">
+            <h2>Route Information</h2>
+            
+            {% if error %}
+            <div class="error-message">
+                <p>{{ error }}</p>
+                <a href="{{ url_for('index') }}" class="btn">Try Another Route</a>
+            </div>
+            {% elif route %}
+            <div class="route-info">
+                <div class="route-header">
+                    <h3>{{ route.origin }} to {{ route.destination }}</h3>
+                </div>
+                <div class="route-details">
+                    <div class="detail">
+                        <span class="label">Distance:</span>
+                        <span class="value">{{ route.distance }} km</span>
+                    </div>
+                    <div class="detail">
+                        <span class="label">Est. Travel Time:</span>
+                        <span class="value">{{ route.time }} hours</span>
+                    </div>
+                </div>
+                
+                <div class="stops-container">
+                    <h4>Route Map</h4>
+                    <div class="route-map">
+                        <div class="station start">{{ route.origin }}</div>
+                        
+                        {% for stop in route.stops %}
+                        <div class="route-line"></div>
+                        <div class="station stop">{{ stop }}</div>
+                        {% endfor %}
+                        
+                        <div class="route-line"></div>
+                        <div class="station end">{{ route.destination }}</div>
+                    </div>
+                </div>
+                
+                <a href="{{ url_for('index') }}" class="btn">Search Another Route</a>
+            </div>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 TNSTC Bus Transportation System</p>
+        </div>
+    </footer>
+</body>
+</html>

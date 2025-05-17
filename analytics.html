@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - TNSTC</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>TNSTC Route Information System</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('all_routes') }}">All Routes</a></li>
+                    <li><a href="{{ url_for('analytics') }}" class="active">Analytics</a></li>
+                    <li><a href="{{ url_for('book_ticket') }}" class="{{ 'active' if request.endpoint == 'book_ticket' else '' }}">Book Ticket</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="analytics">
+            <h2>Route Analytics</h2>
+            {% if analysis %}
+            <div class="analytics-cards">
+                <div class="analytics-card">
+                    <h3>Total Routes</h3>
+                    <p class="value">{{ analysis.total_routes }}</p>
+                </div>
+                <div class="analytics-card">
+                    <h3>Average Distance</h3>
+                    <p class="value">{{ analysis.avg_distance|round(1) }} km</p>
+                </div>
+                <div class="analytics-card">
+                    <h3>Average Travel Time</h3>
+                    <p class="value">{{ analysis.avg_time|round(1) }} hours</p>
+                </div>
+                <div class="analytics-card">
+                    <h3>Longest Route</h3>
+                    <p class="value">{{ analysis.longest_route }}</p>
+                    <p class="sub-value">{{ analysis.max_distance }} km</p>
+                </div>
+                <div class="analytics-card">
+                    <h3>Shortest Route</h3>
+                    <p class="value">{{ analysis.shortest_route }}</p>
+                    <p class="sub-value">{{ analysis.min_distance }} km</p>
+                </div>
+            </div>
+            <div class="charts-container">
+                <div class="chart-wrapper">
+                    <h3>Distance Comparison</h3>
+                    <canvas id="distanceChart"></canvas>
+                </div>
+                <div class="chart-wrapper">
+                    <h3>Travel Time Comparison</h3>
+                    <canvas id="timeChart"></canvas>
+                </div>
+            </div>
+            <script>
+                // Distance Chart
+                const distanceCtx = document.getElementById('distanceChart').getContext('2d');
+                const distanceChart = new Chart(distanceCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: {{ route_names|tojson }},
+                        datasets: [{
+                            label: 'Distance (km)',
+                            data: {{ distances|tojson }},
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Distance (km)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Route Distances'
+                            }
+                        },
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+                
+                // Time Chart
+                const timeCtx = document.getElementById('timeChart').getContext('2d');
+                const timeChart = new Chart(timeCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: {{ route_names|tojson }},
+                        datasets: [{
+                            label: 'Travel Time (hours)',
+                            data: {{ times|tojson }},
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Time (hours)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Route Travel Times'
+                            }
+                        },
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            </script>
+            {% else %}
+            <p class="no-data">No route data available for analysis.</p>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 TNSTC Bus Transportation System</p>
+        </div>
+    </footer>
+</body>
+</html>

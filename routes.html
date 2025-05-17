@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Routes - TNSTC</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>TNSTC Route Information System</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('all_routes') }}" class="active">All Routes</a></li>
+                    <li><a href="{{ url_for('analytics') }}">Analytics</a></li>
+                    <li><a href="{{ url_for('book_ticket') }}" class="{{ 'active' if request.endpoint == 'book_ticket' else '' }}">Book Ticket</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="routes-list">
+            <h2>All Available Routes</h2>
+            {% if routes %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Origin</th>
+                            <th>Destination</th>
+                            <th>Distance (km)</th>
+                            <th>Time (hours)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for route in routes %}
+                        <tr>
+                            <td>{{ route[0] }}</td>
+                            <td>{{ route[1] }}</td>
+                            <td>{{ route[2] }}</td>
+                            <td>{{ route[3] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="no-data">No routes available in the system.</p>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 TNSTC Bus Transportation System</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNSTC Route Information</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>TNSTC Route Information System</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}" class="active">Home</a></li>
+                    <li><a href="{{ url_for('all_routes') }}">All Routes</a></li>
+                    <li><a href="{{ url_for('analytics') }}">Analytics</a></li>
+                    <li><a href="{{ url_for('book_ticket') }}" class="{{ 'active' if request.endpoint == 'book_ticket' else '' }}">Book Ticket</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="intro">
+            <h2>Find Your Bus Route</h2>
+            <p>Welcome to the Tamil Nadu State Transport Corporation route information system. Select your origin and destination to find available bus routes.</p>
+        </section>
+
+        <section class="search-form">
+            <form action="{{ url_for('route_finder') }}" method="post">
+                <div class="form-group">
+                    <label for="origin">Origin:</label>
+                    <select name="origin" id="origin" required>
+                        <option value="">Select Origin</option>
+                        {% for district in districts %}
+                        <option value="{{ district[1] }}">{{ district[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="destination">Destination:</label>
+                    <select name="destination" id="destination" required>
+                        <option value="">Select Destination</option>
+                        {% for district in districts %}
+                        <option value="{{ district[1] }}">{{ district[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn">Find Route</button>
+            </form>
+        </section>
+
+        {% if analysis %}
+        <section class="summary">
+            <h2>System Summary</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Total Routes</h3>
+                    <p>{{ analysis.total_routes }}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Average Distance</h3>
+                    <p>{{ analysis.avg_distance|round(1) }} km</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Average Travel Time</h3>
+                    <p>{{ analysis.avg_time|round(1) }} hours</p>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 TNSTC Bus Transportation System</p>
+        </div>
+    </footer>
+</body>
+</html>
